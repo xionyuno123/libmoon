@@ -3,11 +3,6 @@
 	url = https://github.com/emmericp/LuaJIT
 	ignore = untracked
 	branch = v2.1
-[submodule "deps/dpdk"]
-	path = deps/dpdk
-	url = https://github.com/emmericp/dpdk
-	ignore = untracked
-	branch = v19.05-libmoon
 [submodule "deps/pciids"]
 	path = deps/pciids
 	url = https://github.com/emmericp/pciids
@@ -31,3 +26,7 @@
 	path = deps/tbb
 	url = https://github.com/01org/tbb.git
 	ignore = untracked
+[submodule "deps/dpdk"]
+	path = deps/dpdk
+	url = https://github.com/xionyuno123/dpdk.git
+	branch = v21.11
