@@ -58,15 +58,11 @@ make install DESTDIR=$(pwd)
 (
 cd deps/dpdk
 #build DPDK with the right configuration
-make config T=x86_64-native-linux-gcc O=x86_64-native-linux-gcc
-sed -ri 's,(CONFIG_RTE_LIBRTE_IEEE1588=).*,\1y,' x86_64-native-linux-gcc/.config
-if ${MLX5} ; then
-	sed -ri 's,(MLX5_PMD=).*,\1y,' x86_64-native-linux-gcc/.config
-fi
-if ${MLX4} ; then
-	sed -ri 's,(MLX4_PMD=).*,\1y,' x86_64-native-linux-gcc/.config
-fi
-EXTRA_CFLAGS="-Wno-error" make -j $NUM_CPUS O=x86_64-native-linux-gcc
+meson -Dprefix=${PWD}/install build
+cd build
+ninja -j `nproc`
+ninja install
+cd ../
 )
 
 (
@@ -96,8 +92,8 @@ cmake ${OPTIONS}..
 make -j $NUM_CPUS
 )
 
-echo Trying to bind interfaces, this will fail if you are not root
-echo Try "sudo ./bind-interfaces.sh" if this step fails
-./bind-interfaces.sh ${FLAGS}
+# echo Trying to bind interfaces, this will fail if you are not root
+# echo Try "sudo ./bind-interfaces.sh" if this step fails
+# ./bind-interfaces.sh ${FLAGS}
 )
 

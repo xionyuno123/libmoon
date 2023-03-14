@@ -33,11 +33,11 @@ SET(FILES
 )
 
 SET(DPDK_LIBS
-	rte_net      rte_ethdev       rte_distributor 	 rte_mbuf      rte_pmd_bond       rte_kni              rte_pmd_ring     rte_power  
-	rte_acl      rte_eal          rte_kvargs   	 rte_mempool   rte_mempool_ring	  rte_pmd_e1000        rte_pmd_virtio   rte_ring
-	rte_cfgfile  rte_hash         rte_lpm      	 rte_meter     rte_pmd_i40e   	  rte_pmd_vmxnet3_uio  rte_sched        rte_timer
-	rte_cmdline  rte_ip_frag      rte_pipeline 	 rte_pmd_ixgbe rte_mempool_stack  rte_port             rte_table        rte_pmd_bnxt
-	rte_pmd_ena  rte_pmd_nfp      rte_stack          rte_bus_vdev  rte_bus_pci        rte_pci              rte_cryptodev
+	rte_net      rte_ethdev       rte_distributor 	 rte_mbuf      rte_net_bond       rte_kni              rte_net_ring     rte_power  
+	rte_acl      rte_eal          rte_kvargs   	 rte_mempool   rte_mempool_ring	  rte_net_e1000        rte_net_virtio   rte_ring
+	rte_cfgfile  rte_hash         rte_lpm      	 rte_meter     rte_net_i40e   	  rte_net_vmxnet3  rte_sched        rte_timer
+	rte_cmdline  rte_ip_frag      rte_pipeline 	 rte_net_ixgbe rte_mempool_stack  rte_port             rte_table        rte_net_bnxt
+	rte_net_ena  rte_net_nfp      rte_stack          rte_bus_vdev  rte_bus_pci        rte_pci              rte_cryptodev
 )
 
 #Add Mellanox libraries if options are specified
@@ -77,24 +77,8 @@ SET(ALL_LIBS
 	-Wl,--no-whole-archive
 )
 
-INCLUDE_DIRECTORIES(
-	${CMAKE_CURRENT_SOURCE_DIR}/deps/dpdk/x86_64-native-linux-gcc/include
-	${CMAKE_CURRENT_SOURCE_DIR}/deps/dpdk/drivers/net/bnxt
-	${CMAKE_CURRENT_SOURCE_DIR}/deps/dpdk/drivers/net/ixgbe/base
-	${CMAKE_CURRENT_SOURCE_DIR}/deps/dpdk/drivers/net/ixgbe
-	${CMAKE_CURRENT_SOURCE_DIR}/deps/dpdk/drivers/net/i40e/base
-	${CMAKE_CURRENT_SOURCE_DIR}/deps/dpdk/drivers/net/i40e
-	${CMAKE_CURRENT_SOURCE_DIR}/deps/dpdk/drivers/net/e1000
-	${CMAKE_CURRENT_SOURCE_DIR}/deps/dpdk/drivers/net/e1000/base
-	${CMAKE_CURRENT_SOURCE_DIR}/deps/luajit/src
-	${CMAKE_CURRENT_SOURCE_DIR}/deps/highwayhash/highwayhash
-	${CMAKE_CURRENT_SOURCE_DIR}/deps/tbb/include
-	${CMAKE_CURRENT_SOURCE_DIR}/lib
-	${CMAKE_CURRENT_SOURCE_DIR}/src
-)
-
 LINK_DIRECTORIES(
-	${CMAKE_CURRENT_SOURCE_DIR}/deps/dpdk/x86_64-native-linux-gcc/lib
+	${CMAKE_CURRENT_SOURCE_DIR}/deps/dpdk/install/lib/x86_64-linux-gnu
 	${CMAKE_CURRENT_SOURCE_DIR}/deps/luajit/usr/local/lib
 	${CMAKE_CURRENT_SOURCE_DIR}/deps/highwayhash/lib
 )
@@ -103,9 +87,49 @@ IF(LIBMOON_BUILD_LIBRARY)
 	ADD_DEFINITIONS(-DLIBMOON_BUILD_LIB)
 	# we want libmoon.a, not liblibmoon.a
 	ADD_LIBRARY(moon STATIC ${FILES})
-	TARGET_LINK_LIBRARIES(moon ${ALL_LIBS})
+	TARGET_INCLUDE_DIRECTORIES(
+    moon
+    SYSTEM BEFORE PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/deps/dpdk
+    ${CMAKE_CURRENT_SOURCE_DIR}/deps/dpdk/install/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/deps/dpdk/install/include
+	  ${CMAKE_CURRENT_SOURCE_DIR}/deps/dpdk/lib/ethdev/
+	  ${CMAKE_CURRENT_SOURCE_DIR}/deps/dpdk/drivers/net/bnxt
+	  ${CMAKE_CURRENT_SOURCE_DIR}/deps/dpdk/drivers/net/ixgbe/base
+	  ${CMAKE_CURRENT_SOURCE_DIR}/deps/dpdk/drivers/net/ixgbe
+	  ${CMAKE_CURRENT_SOURCE_DIR}/deps/dpdk/drivers/net/i40e/base
+	  ${CMAKE_CURRENT_SOURCE_DIR}/deps/dpdk/drivers/net/i40e
+	  ${CMAKE_CURRENT_SOURCE_DIR}/deps/dpdk/drivers/net/e1000
+	  ${CMAKE_CURRENT_SOURCE_DIR}/deps/dpdk/drivers/net/e1000/base
+	  ${CMAKE_CURRENT_SOURCE_DIR}/deps/luajit/src
+	  ${CMAKE_CURRENT_SOURCE_DIR}/deps/highwayhash/highwayhash
+	  ${CMAKE_CURRENT_SOURCE_DIR}/deps/tbb/include
+	  ${CMAKE_CURRENT_SOURCE_DIR}/lib
+	  ${CMAKE_CURRENT_SOURCE_DIR}/src
+  )
+  TARGET_LINK_LIBRARIES(moon ${ALL_LIBS})
 ELSE()
 	ADD_EXECUTABLE(libmoon ${FILES})
+  TARGET_INCLUDE_DIRECTORIES(
+    libmoon
+    SYSTEM BEFORE PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/deps/dpdk
+    ${CMAKE_CURRENT_SOURCE_DIR}/deps/dpdk/install/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/deps/dpdk/install/include
+	  ${CMAKE_CURRENT_SOURCE_DIR}/deps/dpdk/lib/ethdev/
+	  ${CMAKE_CURRENT_SOURCE_DIR}/deps/dpdk/drivers/net/bnxt
+	  ${CMAKE_CURRENT_SOURCE_DIR}/deps/dpdk/drivers/net/ixgbe/base
+	  ${CMAKE_CURRENT_SOURCE_DIR}/deps/dpdk/drivers/net/ixgbe
+	  ${CMAKE_CURRENT_SOURCE_DIR}/deps/dpdk/drivers/net/i40e/base
+	  ${CMAKE_CURRENT_SOURCE_DIR}/deps/dpdk/drivers/net/i40e
+	  ${CMAKE_CURRENT_SOURCE_DIR}/deps/dpdk/drivers/net/e1000
+	  ${CMAKE_CURRENT_SOURCE_DIR}/deps/dpdk/drivers/net/e1000/base
+	  ${CMAKE_CURRENT_SOURCE_DIR}/deps/luajit/src
+	  ${CMAKE_CURRENT_SOURCE_DIR}/deps/highwayhash/highwayhash
+	  ${CMAKE_CURRENT_SOURCE_DIR}/deps/tbb/include
+	  ${CMAKE_CURRENT_SOURCE_DIR}/lib
+	  ${CMAKE_CURRENT_SOURCE_DIR}/src
+  )
 	TARGET_LINK_LIBRARIES(libmoon ${ALL_LIBS})
 ENDIF()
 
