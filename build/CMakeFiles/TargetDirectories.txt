@@ -1,3 +1,0 @@
-/home/pcl/xyp/libmoon/build/CMakeFiles/rebuild_cache.dir
-/home/pcl/xyp/libmoon/build/CMakeFiles/edit_cache.dir
-/home/pcl/xyp/libmoon/build/CMakeFiles/libmoon.dir
